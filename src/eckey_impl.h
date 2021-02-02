@@ -79,6 +79,14 @@ static int secp256k1_eckey_privkey_tweak_mul(secp256k1_scalar *key, const secp25
     return ret;
 }
 
+static int secp256k1_eckey_privkey_inv(secp256k1_scalar *inv, const secp256k1_scalar *key) {
+    int ret;
+    ret = !secp256k1_scalar_is_zero(key);
+
+    secp256k1_scalar_inverse(inv, key);
+    return ret;
+}
+
 static int secp256k1_eckey_pubkey_tweak_mul(const secp256k1_ecmult_context *ctx, secp256k1_ge *key, const secp256k1_scalar *tweak) {
     secp256k1_scalar zero;
     secp256k1_gej pt;

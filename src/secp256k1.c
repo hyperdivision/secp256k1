@@ -703,6 +703,28 @@ int secp256k1_ec_privkey_tweak_mul(const secp256k1_context* ctx, unsigned char *
     return secp256k1_ec_seckey_tweak_mul(ctx, seckey, tweak32);
 }
 
+int secp256k1_ec_seckey_inv(const secp256k1_context* ctx, unsigned char *seckey) {
+    secp256k1_scalar inv;
+
+    secp256k1_scalar sec;
+    int ret = 0;
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(seckey != NULL);
+
+    secp256k1_scalar_set_b32(&sec, seckey, NULL);
+    ret = secp256k1_eckey_privkey_inv(&inv, &sec);
+    secp256k1_scalar_cmov(&inv, &secp256k1_scalar_zero, !ret);
+    secp256k1_scalar_get_b32(seckey, &inv);
+
+    secp256k1_scalar_clear(&sec);
+    secp256k1_scalar_clear(&inv);
+    return ret;
+}
+
+int secp256k1_ec_privkey_inv(const secp256k1_context* ctx, unsigned char *seckey) {
+    return secp256k1_ec_seckey_inv(ctx, seckey);
+}
+
 int secp256k1_ec_pubkey_tweak_mul(const secp256k1_context* ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak32) {
     secp256k1_ge p;
     secp256k1_scalar factor;
